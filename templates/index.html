@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>CareerVerse AI</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+
+            font-family:'Poppins',sans-serif;
+
+            background:url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f');
+
+            background-size:cover;
+            background-position:center;
+
+            min-height:100vh;
+        }
+
+        .overlay{
+
+            min-height:100vh;
+            padding:30px;
+
+            background:rgba(0,0,0,0.55);
+
+            display:flex;
+
+            justify-content:center;
+            align-items:center;
+        }
+
+        .container{
+
+            width:85%;
+            max-width:1200px;
+
+            backdrop-filter:blur(12px);
+
+            background:rgba(255,255,255,0.12);
+
+            border-radius:25px;
+
+            padding:30px;
+
+            box-shadow:0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .logo{
+
+            text-align:center;
+
+            color:white;
+
+            font-family:'Cormorant Garamond',serif;
+
+            font-size:72px;
+
+            letter-spacing:2px;
+
+            margin-bottom:10px;
+        }
+
+        .tagline{
+
+            text-align:center;
+
+            color:#E0E7FF;
+
+            font-size:24px;
+
+            font-style:italic;
+
+            margin-bottom:10px;
+        }
+
+        .subtag{
+
+            text-align:center;
+
+            color:white;
+
+            font-size:18px;
+
+            margin-bottom:30px;
+
+            opacity:0.9;
+        }
+
+        #chat-box{
+           
+            position:relative;
+
+    height: 380px;
+
+    overflow-y:auto;
+
+    border-radius:25px;
+
+    padding:25px;
+
+    margin-bottom:20px;
+
+    background:linear-gradient(
+        135deg,
+        rgba(255,255,255,0.25),
+        rgba(255,255,255,0.08)
+    );
+
+    backdrop-filter:blur(15px);
+
+    border:1px solid rgba(255,255,255,0.3);
+
+    box-shadow:
+    0 8px 32px rgba(0,0,0,0.25),
+    inset 0 1px 1px rgba(255,255,255,0.3);
+
+    color:white;
+    .watermark{
+
+    position:absolute;
+
+    top:50%;
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    font-size:80px;
+
+    font-family:'Cormorant Garamond',serif;
+
+    color:rgba(255,255,255,0.08);
+
+    pointer-events:none;
+
+    user-select:none;
+
+    font-weight:bold;
+
+    letter-spacing:3px;
+
+    z-index:0;
+}
+}
+
+        .user{
+
+            text-align:right;
+
+            margin:15px;
+        }
+
+        .bot{
+
+            text-align:left;
+
+            margin:15px;
+        }
+
+        .user span{
+
+            background:#4F46E5;
+
+            color:white;
+
+            padding:12px 18px;
+
+            border-radius:18px;
+
+            display:inline-block;
+
+            max-width:70%;
+        }
+
+        .bot span{
+
+            background:#F1F5F9;
+
+            color:black;
+
+            padding:12px 18px;
+
+            border-radius:18px;
+
+            display:inline-block;
+
+            max-width:70%;
+        }
+
+        .input-area{
+
+            display:flex;
+
+            justify-content:center;
+        }
+
+        input{
+
+            width:85%;
+
+            padding:18px;
+
+            font-size:18px;
+
+            border:none;
+
+            border-radius:15px;
+
+            outline:none;
+        }
+
+        button{
+
+            margin-left:10px;
+
+            padding:18px 28px;
+
+            background:#4F46E5;
+
+            color:white;
+
+            border:none;
+
+            border-radius:15px;
+
+            font-size:16px;
+
+            cursor:pointer;
+        }
+
+        button:hover{
+
+            background:#3730A3;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="container">
+
+<div class="logo">
+CareerVerse
+</div>
+
+<div class="tagline">
+Explore. Experience. Excel.
+</div>
+
+<div class="subtag">
+Step into the shoes of your dream career before choosing your future.
+</div>
+
+<div id="chat-box">
+
+    <div class="watermark">
+        CareerVerse
+    </div>
+
+<div class="input-area">
+
+<input
+type="text"
+id="message"
+placeholder="Ask about any career..."
+>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+function sendMessage(){
+
+    let message =
+    document.getElementById("message").value;
+
+    if(message.trim()===""){
+        return;
+    }
+
+    let chatBox =
+    document.getElementById("chat-box");
+
+    chatBox.innerHTML +=
+    `<div class="user">
+        <span>${message}</span>
+    </div>`;
+
+    fetch("/chat",{
+
+        method:"POST",
+
+        headers:{
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify({
+            message:message
+        })
+
+    })
+
+    .then(response=>response.json())
+
+    .then(data=>{
+
+        chatBox.innerHTML +=
+        `<div class="bot">
+            <span>${data.reply}</span>
+        </div>`;
+
+        chatBox.scrollTop =
+        chatBox.scrollHeight;
+
+    });
+
+    document.getElementById("message").value="";
+}
+
+</script>
+
+</body>
+
+</html>
